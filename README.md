@@ -1,6 +1,6 @@
 # Image Reading with Foundation Models
 
-![AppIcon128](Images/AppIcon128.png) This is the **Starter Project** for the video on Image Reading with Foundation Models.
+![AppIcon128](Images/AppIcon128.png) This is the **completed source code** for the video on Image Reading with Foundation Models with improvements for the iPhone Duo
 
 If you want to support my work, you can - </br>
 
