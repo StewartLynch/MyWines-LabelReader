@@ -97,10 +97,14 @@ struct WineDetailView: View {
                 .disabled(isAnalyzing)
                 WineFieldsSection(wine: wine, focusedField: $focusedField)
                     .disabled(isAnalyzing)
+                if let errorMessage {
+                    Section { Label(errorMessage, systemImage: "exclamationmark.triangle") }
+                }
             }
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle(isNew ? "Add Wine" : (wine.winery.isEmpty ? "Wine" : wine.winery))
             .navigationBarTitleDisplayMode(.inline)
+            .horizontalToolbarsOnly(always: isNew)
             .toolbar {
                 // Attached here, not inside the form's rows, so it appears once. The number
                 // and decimal pads have no Return key, so give every field a way out.
