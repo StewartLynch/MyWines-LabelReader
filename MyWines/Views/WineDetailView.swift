@@ -95,6 +95,11 @@ struct WineDetailView: View {
                 }
                 .listRowBackground(Color.clear)
                 .disabled(isAnalyzing)
+                if let errorMessage {
+                    Section {
+                        Label(errorMessage, systemImage: "exclamationmark.triangle")
+                    }
+                }
                 WineFieldsSection(wine: wine, focusedField: $focusedField)
                     .disabled(isAnalyzing)
             }
