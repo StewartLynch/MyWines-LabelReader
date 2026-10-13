@@ -31,6 +31,8 @@ struct WineDetailView: View {
     @State private var showingPhotoPicker = false
     @State private var showingCamera = false
     @State private var showingFullScreenImage = false
+    @State private var isAnalyzing = false
+    @State private var errorMessage: String?
     @FocusState private var focusedField: WineField?
 
     private var labelImage: UIImage? {
@@ -70,12 +72,31 @@ struct WineDetailView: View {
                         Button("Choose from Photos", systemImage: "photo") { showingPhotoPicker = true }
                             .labelStyle(.iconOnly)
                             .frame(maxWidth: .infinity)
+                        if let labelImage, MyWinesAnalyzer.isAvailable {
+                            Button {
+                                Task { await scan(labelImage)}
+                            } label: {
+                                if isAnalyzing {
+                                    ProgressView()
+                                } else {
+                                    Label("Scan Label", systemImage: "text.viewfinder")
+                                }
+                            }
+                            .labelStyle(.iconOnly)
+                            .frame(maxWidth: .infinity)
+                        }
                     }
                     .buttonStyle(.bordered)
+                    if !MyWinesAnalyzer.isAvailable {
+                        Text("Label scanning needs a device that supports Apple Intelligence.  You can still enter the details manually.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .listRowBackground(Color.clear)
-
+                .disabled(isAnalyzing)
                 WineFieldsSection(wine: wine, focusedField: $focusedField)
+                    .disabled(isAnalyzing)
             }
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle(isNew ? "Add Wine" : (wine.winery.isEmpty ? "Wine" : wine.winery))
@@ -93,7 +114,7 @@ struct WineDetailView: View {
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Save", action: save)
-                            .disabled(wine.winery.trimmingCharacters(in: .whitespaces).isEmpty)
+                            .disabled(isAnalyzing || wine.winery.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
                 }
             }
@@ -130,6 +151,24 @@ struct WineDetailView: View {
         if (wine.alcoholPercentage ?? 0) <= 0 { wine.alcoholPercentage = nil }
         modelContext.insert(wine)
         dismiss()
+    }
+    
+    func scan(_ image: UIImage) async {
+        isAnalyzing = true
+        errorMessage = nil
+        defer { isAnalyzing = false }
+        do {
+            let label = try await MyWinesAnalyzer().analyze(image)
+            wine.winery = label.winery
+            wine.wineName = label.wineName
+            wine.variety = label.variety
+            wine.country = label.country
+            wine.region = label.region
+            wine.vintage = label.vintage
+            wine.alcoholPercentage = label.alcoholPercentage
+        } catch {
+            errorMessage = error.localizedDescription + " You can enter the details manually"
+        }
     }
 }
 
