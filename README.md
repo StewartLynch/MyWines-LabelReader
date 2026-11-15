@@ -1,6 +1,9 @@
 # Image Reading with Foundation Models
 
 ![AppIcon128](Images/AppIcon128.png) This is the **Starter Project** for the video on Image Reading with Foundation Models.
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=I6c_cig0ugA
+" target="_blank"><img src="http://img.youtube.com/vi/I6c_cig0ugA/0.jpg" 
+alt="Vision and Apple Intelligence Image Attachments" width="480" height="360" border="1" /></a>
 
 If you want to support my work, you can - </br>
 
